@@ -1,55 +1,45 @@
 const User = require("../../Models/Security/User");
 import bcrypt from "bcryptjs";
 import Role from "../../Models/Security/Role";
-import UserRole from "../../Models/Security/UserRole";
+import IdType from "../../Models/Security/IdType";
 import * as UserService from "../../Services/Security/UserService";
+import CreateEmailService from "../../Services/Security/CreateEmailService";
+import Area from "../../Models/Security/Area";
+import Country from "../../Models/Security/Country";
 const Sequelize = require("../../database");
 
 
 export async function create(req) {
   let me = await UserService.getUserLogged(req);
-  try { 
+  try {
+    let idtype = await IdType.findOne({ where: { abbrev: req.body.idtype }, attributes: ['id'] });
+    let role = await Role.findOne({ where: { name: req.body.role }, attributes: ['id'] });
+    let country = await Country.findOne({ where: { abbrev: req.body.country }, attributes: ['id'] });
+    let area = await Area.findOne({ where: { name: req.body.area }, attributes: ['id'] });
+  
     await Sequelize.transaction(async (t) => {
-      let photo = null;
-      if(req.body.photo != 'null'){
-        photo = "http://localhost:3000/"+req.file.filename;
-      }
       await User.create(
-        {          
-          photo: photo,
-          idtypeId: req.body.idtypeId,
-          idnumber: req.body.numberid,
+        {
+          idtypeId: idtype.id,
+          roleId: role.id,
+          countryId: country.id,
+          areaId: area.id,
+          idnumber: req.body.idnumber,
           firstname: req.body.firstname,
           secondname: req.body.secondname,
           firstlastname: req.body.firstlastname,
           secondlastname: req.body.secondlastname,
-          email: req.body.email,
+          email: await CreateEmailService(req),
+          password: await bcrypt.hash("123", await bcrypt.genSalt(10)),
           username: null,
-          createdBy: me.id,
-          updatedBy: me.id,
-          token: { token: req.body.email },
-        },
-        {
-          include: "token",
-        },
-        { transaction: t }
-      );
-
-      let user = await User.findOne(
-        {
-          where: { email: req.body.email },
-        },
-        { transaction: t }
-      );
-
-      await UserRole.create(
-        {
-          userId: user.id,
-          roleId: req.body.roleId,
+          createdById: me,
+          updatedById: me,
+          createdAt: req.body.createdAt,
         },
         { transaction: t }
       );
     });
+    
     return true;
   } catch (error) {
     console.log(error);
@@ -57,6 +47,8 @@ export async function create(req) {
   }
 }
 
+
+/*
 export async function register(req) {
   try {
     await Sequelize.transaction(async (t) => {

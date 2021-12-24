@@ -4,6 +4,7 @@ import IdType from "../Models/Security/IdType";
 import Role from "../Models/Security/Role";
 import User from "../Models/Security/User";
 import bcrypt from "bcryptjs";
+import moment from 'moment';
 
 export const createRoles = async () => {
   try {
@@ -67,15 +68,14 @@ export const createCountries = async () => {
 
 export const createAdmin = async () => {
   try {
+    const count = await User.count();
+    if (count > 0) return;
     let idType = await IdType.findOne({ where: { abbrev: "C.C" } });
     let role = await Role.findOne({ where: { name: "ADMIN" } });
     let country = await Country.findOne({ where: { abbrev: "co" } });
     let area = await Area.findOne({ where: { name: "ADMINISTRACIÓN" } });
-    console.log(idType.id);
-    const count = await User.count();
-    if (count > 0) return;
     await Promise.all([
-      new User({ 
+      new User({
         idnumber: "3589879632",
         firstname: "ENRIQUE",
         secondname: "JOSE",
@@ -83,13 +83,14 @@ export const createAdmin = async () => {
         secondlastname: "OSIA",
         email: "admin@hotmail.com",
         username: "admin",
-        password: await bcrypt.hash("123",await bcrypt.genSalt(10)),
+        password: await bcrypt.hash("123", await bcrypt.genSalt(10)),
         reset_password: false,
         idtypeId: idType.id,
         roleId: role.id,
         countryId: country.id,
         areaId: area.id,
-    }).save()
+        createdAt: moment()
+      }).save()
     ]);
   } catch (error) {
     console.log(error);

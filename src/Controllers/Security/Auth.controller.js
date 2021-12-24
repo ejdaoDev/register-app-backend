@@ -22,8 +22,8 @@ export const login = async (req, res) => {
     if (!comparePass) {
       res.status(200).json({ type: "204", error: "credenciales invalidas" });
     } else {
-      const token = jwt.sign({ id: user.id }, config.SECRET, {
-        expiresIn: 86400,
+      const token = jwt.sign({ id: user.id, role:user.role.name }, config.SECRET, {
+        expiresIn: 86400, //24 Horas
       });
       res.status(200).json({ type: "200", data: { user: user, token: token } });
 

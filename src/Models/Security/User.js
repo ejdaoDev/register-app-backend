@@ -14,11 +14,12 @@ User.init(
     username: { type: DataTypes.STRING(20), unique: true, allowNull: true },
     password: { type: DataTypes.STRING(255) },
     reset_password: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    createdAt: { type: DataTypes.DATE, allowNull: true },
   },
   {
     sequelize,
     modelName: "user",
-    timestamps: true,
+    timestamps: false,
   }
 );
 
