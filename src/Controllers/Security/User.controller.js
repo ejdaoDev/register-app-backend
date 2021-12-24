@@ -1,68 +1,43 @@
-const User = require("../../Models/Security/User");
-const { Op } = require("sequelize");
-//import IdType from "../../Models/Security/IdType";
-import * as UserRepository from "../../Repositories/Security/UserRepository";
-//import * as UserService from "../../Services/Security/UserService";
-
+import User from "../../Models/Security/User";
+import * as UserRepository from "../../Repositories/Security/User.repository";
 
 export const create = async (req, res) => {
   let idnumberExist = await User.findOne({ where: { idnumber: req.body.idnumber } });
   if (idnumberExist) {
-    res.json({ status: "204", message: "Este id existe" });
+    res.json({ status: "204", message: "this idnumber exist" });
   } else {
-    let result = await UserRepository.create(req);
+    let result = await UserRepository.createUser(req);
     if (result) {
-      res.json({ type: "200", message: "usuario creado satisfactoriamente" });
+      res.json({ status: "200", message: "user created successfully" });
     } else {
-      res.json({ type: "204", message: "ha ocurrido algún error" });
+      res.json({ status: "204", message: "something went wrong" });
     }
   }
-
 };
 
-/*
-export const getAllUsers = async (req, res) => {
-  let me = await UserService.getUserLogged(req);
-  let Users = await User.findAll({ include: [{
-    model: UserRole,
-    as: 'roles',
-    attributes: ['roleId']
-  }, {
-    model: IdType,
-    as: 'idtype'
-  }], where: { createdBy: me.id } });
-  res.status(200).json({ type:"200", data: {Users: Users} });
+export const getAll = async (req, res) => {
+  let result = await UserRepository.getUsers(req);
+  res.json({ status: "200", data: { users: result } });
 }
 
-export const getUser = async (req, res) => {
-  let UserEdit = await User.findOne({ include: [{
-    model: UserRole,
-    as: 'roles',
-    attributes: ['roleId']
-  }, {
-    model: IdType,
-    as: 'idtype'
-  }], where: { id: req.params.id } });
-  if(UserEdit) res.status(200).json({ type:"200", data: {User: UserEdit} });
+export const getOne = async (req, res) => {
+  let result = await UserRepository.getUsers(req);
+  if (!result) {
+    res.json({ status: "204", data: { message: 'user not exist' } });
+  } else {
+    res.json({ status: "200", data: { user: result } });
+  }
 }
 
-export const deleteUser = async (req, res) => {
-  await UserRole.destroy({where: { userId: req.params.id }});
-  await User.destroy({ where: { id: req.params.id } });  
-  res.status(200).json({ type:"200", data: {message: "usuario eliminado exitosamente"} });
+export const deleteOne = async (req, res) => {
+  await User.destroy({ where: { id: req.params.id } });
+  res.json({ status: "200", data: { message: "user successfully delete" } });
 }
 
-export const editUser = async (req, res) => {
-  let result = await UserRepository.update(req);
-  if (result) res.status(200).json({ type:"200", data: {message: "usuario editado exitosamente"}  });
-  if (!result) res.status(200).json({ type:"204", data: {message: "numero de identidad y/o email ya"}  });
-}*/
+export const update = async (req, res) => {
+  let result = await UserRepository.updateUser(req);
+  if (result) { res.json({ status: "200", data: { message: "user updated successfully" } }) } else {
 
-/*
-export const register = async (req, res) => {
-  let emailExist = await User.findOne({ where: { email: req.body.email } });
-  if (emailExist) res.status(200).json({ type:"204", message: "este email existe" });
-  let result = await UserRepository.register(req);
-  if (result) res.status(200).json({ type:"200", message: "usuario creado satisfactoriamente" });
-  if (!result) res.status(200).json({ type:"204", message: "usuario no pudo ser creado" });
-};*/
+    res.json({ status: "204", data: { message: "this email and/or idnumber exist" } });
+  }
+}

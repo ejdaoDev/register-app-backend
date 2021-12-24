@@ -1,9 +1,10 @@
-import express,{ json } from 'express';
+import express, { json } from 'express';
 import morgan from 'morgan';
 import { createAdmin, createAreas, createCountries, createIdtypes, createRoles } from './Libs/seeds';
 const cors = require('cors');
 
 const app = express();
+require('dotenv').config({path:'./.env'})
 
 createRoles();
 createIdtypes();

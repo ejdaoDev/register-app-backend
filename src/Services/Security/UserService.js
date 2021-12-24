@@ -1,9 +1,7 @@
-const User = require("../../Models/Security/User");
 import jwt from "jsonwebtoken";
-import config from "../../config";
 
-export async function getUserLogged(req) {
+export async function getAuthId(req) {
   const jwtToken = req.headers["x-access-token"];
-  const decoded = jwt.verify(jwtToken, config.SECRET);
+  const decoded = jwt.verify(jwtToken, process.env.SECRET);
   return decoded.id;
 }
