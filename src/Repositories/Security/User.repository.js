@@ -5,19 +5,23 @@ import * as UserService from "../../Services/Security/UserService";
 import CreateEmailService from "../../Services/Security/CreateEmailService";
 import Country from "../../Models/Security/Country";
 import User from "../../Models/Security/User";
+import Area from "../../Models/Security/Area";
 const Sequelize = require("../../database");
 
 export async function createUser(req) {
   let me = await UserService.getAuthId(req);
   try {
+    let idtype = await IdType.findOne({ where: { abbrev: req.body.idtype }, attributes: ['id'] });
+    let role = await Role.findOne({ where: { name: req.body.role }, attributes: ['id'] });
     let country = await Country.findOne({ where: { abbrev: req.body.country }, attributes: ['id'] });
+    let area = await Area.findOne({ where: { name: req.body.area }, attributes: ['id'] });
     await Sequelize.transaction(async (t) => {
       await User.create(
         {
-          idtypeId: req.body.idtype,
-          roleId: req.body.role,
+          idtypeId: idtype.id,
+          roleId: role.id,
           countryId: country.id,
-          areaId: req.body.area,
+          areaId: area.id,
           idnumber: req.body.idnumber,
           firstname: req.body.firstname,
           secondname: req.body.secondname,
@@ -44,14 +48,17 @@ export async function createUser(req) {
 export async function updateUser(req) {
   let me = await UserService.getAuthId(req);
   try {
+    let idtype = await IdType.findOne({ where: { abbrev: req.body.idtype }, attributes: ['id'] });
+    let role = await Role.findOne({ where: { name: req.body.role }, attributes: ['id'] });
     let country = await Country.findOne({ where: { abbrev: req.body.country }, attributes: ['id'] });
+    let area = await Area.findOne({ where: { name: req.body.area }, attributes: ['id'] });
     await Sequelize.transaction(async (t) => {
       await User.update(
         {
-          idtypeId: req.body.idtype,
-          roleId: req.body.role,
+          idtypeId: idtype.id,
+          roleId: role.id,
           countryId: country.id,
-          areaId: req.body.area,
+          areaId: area.id,
           idnumber: req.body.idnumber,
           firstname: req.body.firstname,
           secondname: req.body.secondname,
@@ -78,9 +85,11 @@ export async function getUsers(req) {
     let me = await UserService.getAuthId(req);
     let Users = await User.findAll({
       include: [
-        { model: Role, attributes: ['name'] },
-        { model: IdType, attributes: ['abbrev'] }], where: { createdById: me },
-      attributes: { exclude: ['password', 'username', 'reset_password'] }
+        { model: Role },
+        { model: Country },
+        { model: Area },
+        { model: IdType }], where: { createdById: me },
+      attributes: { exclude: ['password', 'username', 'reset_password', 'updatedBy'] }
     });
     return Users;
   } else {

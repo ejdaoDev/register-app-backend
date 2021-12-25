@@ -5,26 +5,27 @@ import Role from "../../Models/Security/Role";
 import User from "../../Models/Security/User";
 
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   let user = await User.findOne({
     include: [{ model: Role, attributes: ['name'] }],
     where: {
-      [Op.or]: [{ email: username }, { username: username }],
+      [Op.or]: [{ email: email }, { username: email }],
     }
   });
 
   if (!user) {
-    res.status(200).json({ type: "204", error: "credenciales invalidas" })
+    res.json({ status: 204, data: { message: "invalid credentials" } })
   } else {
     let comparePass = await bcrypt.compare(password, user.password);
     if (!comparePass) {
-      res.status(200).json({ type: "204", error: "credenciales invalidas" });
+      res.json({ status: 204, data: { message: "invalid credentials" } });
     } else {
-      const token = jwt.sign({ id: user.id, role:user.role.name }, process.env.SECRET, {
+      const token = jwt.sign({ id: user.id, role: user.role.name }, process.env.SECRET, {
         expiresIn: 86400, //24 Horas
       });
-      res.status(200).json({ type: "200", data: { user: user, token: token } });
+
+      res.json({ status: 200, data: { user: user, token: token } });
 
     }
   }
