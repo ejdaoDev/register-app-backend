@@ -1,6 +1,5 @@
 import app from "./app";
 import express from "express";
-
 const sequelize = require("./database");
 const path = require('path');
 
@@ -10,12 +9,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public/images')));
-
-// Models
-require("./Models/Models");
-
-//seeds
-require("./Libs/seeds");
 
 // Routes
 require("./Routes/Routes");

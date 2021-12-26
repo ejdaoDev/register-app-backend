@@ -6,6 +6,10 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config({path:'./.env'})
 
+// Models
+require("./Models/Models");
+
+//Seeds
 createRoles();
 createIdtypes();
 createAreas();

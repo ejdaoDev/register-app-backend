@@ -40,11 +40,11 @@ export const createAreas = async () => {
     const count = await Area.count();
     if (count > 0) return;
     await Promise.all([
-      new Area({ name: "ADMINISTRACIÓN" }).save(),
+      new Area({ name: "ADMINISTRACION" }).save(),
       new Area({ name: "FINANCIERA" }).save(),
       new Area({ name: "COMPRAS" }).save(),
       new Area({ name: "INFRASTRUCTURA" }).save(),
-      new Area({ name: "OPERACIÓN" }).save(),
+      new Area({ name: "OPERACION" }).save(),
       new Area({ name: "TALENTO HUMANO" }).save(),
       new Area({ name: "SERVICIOS VARIOS" }).save(),
     ]);
