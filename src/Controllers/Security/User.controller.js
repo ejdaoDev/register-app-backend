@@ -1,5 +1,6 @@
 import User from "../../Models/Security/User";
 import * as UserRepository from "../../Repositories/Security/User.repository";
+import CreateEmailService from "../../Services/Security/CreateEmailService";
 
 export const create = async (req, res) => {
   let idnumberExist = await User.findOne({ where: { idnumber: req.body.idnumber } });
@@ -40,5 +41,15 @@ export const update = async (req, res) => {
     res.json({ status: 200, data: { message: "user updated successfully" } })
   } else {
     res.json({ status: 204, data: { message: "this email and/or idnumber exist" } });
+  }
+}
+
+export const getNewEmail = async (req,res) => {
+  try {
+    const email = await CreateEmailService(req);
+    res.json({ status: 200, data: { email: email } });  
+  } catch (error) {
+    console.log(error);
+    res.json({ status: 200, data: { email: 'undefined@cidenet.??' } });    
   }
 }

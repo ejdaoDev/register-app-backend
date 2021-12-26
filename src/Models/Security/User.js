@@ -4,7 +4,6 @@ const sequelize = require('../../database');
 class User extends Model { }
 User.init(
   {
-
     idnumber: { type: DataTypes.STRING(20), unique: true, allowNull: true },
     firstname: { type: DataTypes.STRING(20), allowNull: true },
     secondname: { type: DataTypes.STRING(20), allowNull: true },
@@ -14,12 +13,11 @@ User.init(
     username: { type: DataTypes.STRING(20), unique: true, allowNull: true },
     password: { type: DataTypes.STRING(255) },
     reset_password: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-    createdAt: { type: DataTypes.DATE, allowNull: true },
   },
   {
     sequelize,
+    paranoid:true,
     modelName: "user",
-    timestamps: false,
   }
 );
 

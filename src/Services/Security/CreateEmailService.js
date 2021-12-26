@@ -29,27 +29,27 @@ export default async function CreateEmailService(req) {
 }
 
 async function Generate(req) {
-    const { firstname, firstlastname } = req.body;
+    const { firstname, firstlastname, country } = req.body;
     //Eliminamos los espacios de los nombres y se pasan los caracteres a minusculas
-    const firstnameWitoutSpaces = firstname.replace(' ', '').toLowerCase();
-    const firstlastnameWitoutSpaces = firstlastname.replace(' ', '').toLowerCase();
+    const firstnameWitoutSpaces = firstname.replace(/\s+/g, '').toLowerCase().trim();
+    const firstlastnameWitoutSpaces = firstlastname.replace(/\s+/g, '').toLowerCase().trim();
     //Se consulta en la BBDD si existe un email que contenga la combinación
     let email = firstnameWitoutSpaces + firstlastnameWitoutSpaces;
-    let existEmail = await User.findOne({ where: { email: { [Op.like]: `%${email}%` } } });
+    let existEmail = await User.findOne({ where: { email: { [Op.like]: `%${email}%` } }, paranoid:false });
     //Si no hay email similar, se genera un correo sin Id
     if (!existEmail) {
-        return email + '@cidenet.com.' + req.body.country;
+        return email + '@cidenet.com.' + country;
     }
     //Si existe emails similares, se agrega un Id diferente hasta que genere un email nuevo
     else {
-        let count = await User.count({ where: { email: { [Op.like]: `%${email}%` } } });
+        let count = await User.count({ where: { email: { [Op.like]: `%${email}%` } }, paranoid:false });
         let emailWithId;
         while (existEmail !== 0) {
             emailWithId = email + count;
-            existEmail = await User.count({ where: { email: { [Op.like]: `%${emailWithId}%` } } });
+            existEmail = await User.count({ where: { email: { [Op.like]: `%${emailWithId}%` } }, paranoid:false });
             count++;
         }
-        return emailWithId + '@cidenet.com.' + req.body.country;
+        return emailWithId + '@cidenet.com.' + country;
     }
 
 }
