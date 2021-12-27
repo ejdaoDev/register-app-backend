@@ -1,10 +1,11 @@
-import Area from "../Models/Security/Area";
-import Country from "../Models/Security/Country";
-import IdType from "../Models/Security/IdType";
-import Role from "../Models/Security/Role";
-import User from "../Models/Security/User";
+import Area from "../Models/Security/Area.js";
+import Country from "../Models/Security/Country.js";
+import IdType from "../Models/Security/IdType.js";
+import Role from "../Models/Security/Role.js";
+import User from "../Models/Security/User.js";
 import bcrypt from "bcryptjs";
 import moment from 'moment';
+import 'regenerator-runtime/runtime';
 
 export const createRoles = async () => {
   try {

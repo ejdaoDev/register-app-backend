@@ -39,25 +39,17 @@ var IdType = /*#__PURE__*/function (_Model) {
 }(Model);
 
 IdType.init({
-  abbreviation: {
+  abbrev: {
     type: DataTypes.STRING(10),
     allowNull: false
   },
   name: {
     type: DataTypes.STRING(50),
     allowNull: true
-  },
-  createdBy: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  updatedBy: {
-    type: DataTypes.INTEGER,
-    allowNull: true
   }
 }, {
   sequelize: sequelize,
   modelName: "idtype",
-  timestamps: true
+  timestamps: false
 });
 module.exports = IdType;

@@ -11,10 +11,5 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 var express = require('express');
 
 var router = express.Router();
-
-var User = require('../../Models/Security/User');
-
-var Token = require('../../Models/Security/Token');
-
 router.post('/login', AuthController.login);
 module.exports = router;

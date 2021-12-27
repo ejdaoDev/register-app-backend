@@ -24,28 +24,28 @@ var _require = require('sequelize'),
 
 var sequelize = require('../../database');
 
-var Token = /*#__PURE__*/function (_Model) {
-  _inherits(Token, _Model);
+var Area = /*#__PURE__*/function (_Model) {
+  _inherits(Area, _Model);
 
-  var _super = _createSuper(Token);
+  var _super = _createSuper(Area);
 
-  function Token() {
-    _classCallCheck(this, Token);
+  function Area() {
+    _classCallCheck(this, Area);
 
     return _super.apply(this, arguments);
   }
 
-  return Token;
+  return Area;
 }(Model);
 
-Token.init({
-  token: {
-    type: DataTypes.STRING(500),
+Area.init({
+  name: {
+    type: DataTypes.STRING(50),
     allowNull: true
   }
 }, {
   sequelize: sequelize,
-  modelName: "token",
+  modelName: "area",
   timestamps: false
 });
-module.exports = Token;
+module.exports = Area;

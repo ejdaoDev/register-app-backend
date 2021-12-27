@@ -2,24 +2,47 @@
 
 var User = require('./Security/User');
 
-var Token = require('./Security/Token');
-
 var IdType = require('./Security/IdType');
 
 var Role = require('./Security/Role');
 
-var UserRole = require('./Security/UserRole');
+var Country = require('./Security/Country');
+
+var Area = require('./Security/Area');
 
 IdType.hasMany(User, {
   as: "users",
   foreignKey: "idtypeId"
 });
-User.hasMany(UserRole, {
-  as: "users",
-  foreignKey: "userId"
+User.belongsTo(IdType, {
+  foreignKey: "idtypeId"
 });
-Role.hasMany(UserRole, {
-  as: "roles",
+Role.hasMany(User, {
+  as: "users",
   foreignKey: "roleId"
-}); //Role.belongsToMany(User,  { through: "user_roles", timestamps: false })
-//User.belongsToMany(Role,  { through: "user_roles", timestamps: false })
+});
+User.belongsTo(Role, {
+  foreignKey: "roleId"
+});
+Country.hasMany(User, {
+  as: "users",
+  foreignKey: "countryId"
+});
+User.belongsTo(Country, {
+  foreignKey: "countryId"
+});
+Area.hasMany(User, {
+  as: "users",
+  foreignKey: "areaId"
+});
+User.belongsTo(Area, {
+  foreignKey: "areaId"
+});
+User.hasMany(User, {
+  as: "createdBy",
+  foreignKey: "createdById"
+});
+User.hasMany(User, {
+  as: "updatedBy",
+  foreignKey: "updatedById"
+});

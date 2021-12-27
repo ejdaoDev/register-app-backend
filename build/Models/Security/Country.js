@@ -18,36 +18,38 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var _require = require("sequelize"),
+var _require = require('sequelize'),
     Model = _require.Model,
     DataTypes = _require.DataTypes;
 
 var sequelize = require('../../database');
 
-var Token = require('./Token');
+var Country = /*#__PURE__*/function (_Model) {
+  _inherits(Country, _Model);
 
-var IdType = require('./IdType');
+  var _super = _createSuper(Country);
 
-var Role = require('./Role');
-
-var UserRole = /*#__PURE__*/function (_Model) {
-  _inherits(UserRole, _Model);
-
-  var _super = _createSuper(UserRole);
-
-  function UserRole() {
-    _classCallCheck(this, UserRole);
+  function Country() {
+    _classCallCheck(this, Country);
 
     return _super.apply(this, arguments);
   }
 
-  return UserRole;
+  return Country;
 }(Model);
 
-UserRole.init({}, {
+Country.init({
+  abbrev: {
+    type: DataTypes.STRING(10),
+    allowNull: false
+  },
+  name: {
+    type: DataTypes.STRING(50),
+    allowNull: true
+  }
+}, {
   sequelize: sequelize,
-  modelName: "user_role",
+  modelName: "country",
   timestamps: false
-}); //User.hasOne(Token, { as: "token", foreignKey: "userId" });
-
-module.exports = UserRole;
+});
+module.exports = Country;

@@ -24,12 +24,6 @@ var _require = require("sequelize"),
 
 var sequelize = require('../../database');
 
-var Token = require('./Token');
-
-var IdType = require('./IdType');
-
-var Role = require('./Role');
-
 var User = /*#__PURE__*/function (_Model) {
   _inherits(User, _Model);
 
@@ -48,11 +42,11 @@ User.init({
   idnumber: {
     type: DataTypes.STRING(20),
     unique: true,
-    allowNull: false
+    allowNull: true
   },
   firstname: {
     type: DataTypes.STRING(20),
-    allowNull: false
+    allowNull: true
   },
   secondname: {
     type: DataTypes.STRING(20),
@@ -60,7 +54,7 @@ User.init({
   },
   firstlastname: {
     type: DataTypes.STRING(20),
-    allowNull: false
+    allowNull: true
   },
   secondlastname: {
     type: DataTypes.STRING(20),
@@ -69,7 +63,7 @@ User.init({
   email: {
     type: DataTypes.STRING(100),
     unique: true,
-    allowNull: false
+    allowNull: true
   },
   username: {
     type: DataTypes.STRING(20),
@@ -82,25 +76,11 @@ User.init({
   reset_password: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: false
-  },
-  createdBy: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
-  },
-  updatedBy: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    defaultValue: true
   }
 }, {
   sequelize: sequelize,
-  modelName: "user",
-  timestamps: true
-});
-User.hasOne(Token, {
-  as: "token",
-  foreignKey: "userId"
+  paranoid: true,
+  modelName: "user"
 });
 module.exports = User;

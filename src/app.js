@@ -1,6 +1,6 @@
 import express, { json } from 'express';
 import morgan from 'morgan';
-import { createAdmin, createAreas, createCountries, createIdtypes, createRoles } from './Libs/seeds';
+import { createAdmin, createAreas, createCountries, createIdtypes, createRoles } from './Libs/seeds.js';
 const cors = require('cors');
 
 const app = express();

@@ -7,13 +7,11 @@ exports.login = void 0;
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
-var _config = _interopRequireDefault(require("../../config"));
-
 var _bcryptjs = _interopRequireDefault(require("bcryptjs"));
 
 var _Role = _interopRequireDefault(require("../../Models/Security/Role"));
 
-var _Token = _interopRequireDefault(require("../../Models/Security/Token"));
+var _User = _interopRequireDefault(require("../../Models/Security/User"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -23,67 +21,80 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var User = require("../../Models/Security/User");
-
 var _require = require("sequelize"),
     Op = _require.Op;
 
 var login = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var _req$body, username, password, user, comparePass, token;
+    var _req$body, email, password, user, comparePass, token;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _req$body = req.body, username = _req$body.username, password = _req$body.password;
+            _req$body = req.body, email = _req$body.email, password = _req$body.password;
             _context.next = 3;
-            return User.findOne({
-              where: _defineProperty({}, Op.or, [{
-                email: username
-              }, {
-                username: username
-              }]),
-              include: {
+            return _User["default"].findOne({
+              include: [{
                 model: _Role["default"],
-                attributes: ["name"]
-              }
+                attributes: ['name']
+              }],
+              where: _defineProperty({}, Op.or, [{
+                email: email
+              }, {
+                username: email
+              }])
             });
 
           case 3:
             user = _context.sent;
-            if (!user) res.status(401).json({
-              error: "invalid credentials"
-            });
-            _context.next = 7;
-            return _bcryptjs["default"].compare(password, user.password);
 
-          case 7:
-            comparePass = _context.sent;
-            if (!comparePass) res.status(401).json({
-              error: "invalid credentials"
-            });
-            token = _jsonwebtoken["default"].sign({
-              username: username
-            }, _config["default"].SECRET, {
-              expiresIn: 86400
-            });
-            _context.next = 12;
-            return _Token["default"].update({
-              token: token
-            }, {
-              where: {
-                userId: user.id
+            if (user) {
+              _context.next = 8;
+              break;
+            }
+
+            res.json({
+              status: 204,
+              data: {
+                message: "invalid credentials"
               }
             });
+            _context.next = 12;
+            break;
+
+          case 8:
+            _context.next = 10;
+            return _bcryptjs["default"].compare(password, user.password);
+
+          case 10:
+            comparePass = _context.sent;
+
+            if (!comparePass) {
+              res.json({
+                status: 204,
+                data: {
+                  message: "invalid credentials"
+                }
+              });
+            } else {
+              token = _jsonwebtoken["default"].sign({
+                id: user.id,
+                role: user.role.name
+              }, process.env.SECRET, {
+                expiresIn: 86400 //24 Horas
+
+              });
+              res.json({
+                status: 200,
+                data: {
+                  user: user,
+                  token: token
+                }
+              });
+            }
 
           case 12:
-            if (user) res.status(200).json({
-              user: user,
-              token: token
-            });
-
-          case 13:
           case "end":
             return _context.stop();
         }

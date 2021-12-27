@@ -1,14 +1,16 @@
 "use strict";
 
-var _app = _interopRequireDefault(require("./app"));
+var _app = _interopRequireDefault(require("./app.js"));
 
 var _express = _interopRequireDefault(require("express"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var sequelize = require('./database');
+var sequelize = require("./database");
 
-var PORT = process.env.PORT || 4000;
+var path = require('path');
+
+var PORT = process.env.PORT || 3000; //Middlewares
 
 _app["default"].use(_express["default"].json());
 
@@ -16,30 +18,21 @@ _app["default"].use(_express["default"].urlencoded({
   extended: false
 }));
 
-_app["default"].get("/", function (req, res) {
-  res.json("Hola Mundo");
-}); // Models
+_app["default"].use(_express["default"]["static"](path.join(__dirname, 'public/images'))); // Routes
 
 
-require("./Models/Models");
-
-require("./Libs/InicialSetup"); // Routes
-
-
-_app["default"].use("/api/auth", require("./Routes/Security/Auth.route"));
-
-_app["default"].use("/api/users", require("./Routes/Security/User.route")); // Server Start
+require("./Routes/Routes"); // Server Start
 
 
 _app["default"].listen(PORT, function () {
-  console.log("La app ha arrancado en http://localhost:".concat(PORT)); // Conect with the db
+  console.log("start http://localhost:".concat(PORT)); // Conect with the db
   // Force true: DROP TABLES
 
   sequelize.sync({
     force: false
   }).then(function () {
-    console.log("Nos hemos conectado a la base de datos");
+    console.log("connect with db");
   })["catch"](function (error) {
-    console.log("Se ha producido un error", error);
+    console.log("error", error);
   });
 });
